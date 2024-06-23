@@ -1,14 +1,17 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
+
 """
 Server module for paginating a database of popular baby names.
 """
+
 
 import csv
 from typing import List, Tuple
 
 
 def index_range(page: int, page_size: int) -> Tuple[int, int]:
-    """Calculate the start and end index for a given page and page size.
+    """
+    Calculate the start and end index for a given page and page size.
 
     Args:
         page (int): The current page number.
@@ -23,15 +26,18 @@ def index_range(page: int, page_size: int) -> Tuple[int, int]:
 
 
 class Server:
-    """Server class to paginate a database of popular baby names."""
-    
+    """
+    Server class to paginate a database of popular baby names.
+    """
+
     DATA_FILE = "Popular_Baby_Names.csv"
 
     def __init__(self):
         self.__dataset = None
 
     def dataset(self) -> List[List]:
-        """Cached dataset.
+        """
+        Cached dataset.
 
         Returns:
             List[List]: A list of lists containing the dataset.
@@ -45,7 +51,8 @@ class Server:
         return self.__dataset
 
     def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
-        """Get a page of the dataset.
+        """
+        Get a page of the dataset.
 
         Args:
             page (int): The current page number. Defaults to 1.
