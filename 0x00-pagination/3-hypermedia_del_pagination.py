@@ -1,9 +1,9 @@
+#!/usr/bin/env python3
 """
 Deletion-resilient hypermedia pagination
 """
 
 import csv
-import math
 from typing import List, Dict, Any
 
 
@@ -32,13 +32,13 @@ class Server:
         """
         if self.__indexed_dataset is None:
             dataset = self.dataset()
-            truncated_dataset = dataset[:1000]
+            truncated_dataset = dataset[:1000]  # Truncated for faster testing
             self.__indexed_dataset = {
                 i: dataset[i] for i in range(len(dataset))
             }
         return self.__indexed_dataset
 
-    def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict:
+    def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict[str, Any]:
         """Get hypermedia pagination info with deletion resilience.
 
         Args:
@@ -48,8 +48,7 @@ class Server:
         Returns:
             Dict[str, Any]: A dictionary containing pagination information.
         """
-        assert (index is not None and isinstance(index, int)
-                and 0 <= index < len(self.indexed_dataset())), (
+        assert index is not None and isinstance(index, int) and 0 <= index < len(self.indexed_dataset()), (
             "index must be a valid integer within the dataset range"
         )
         assert isinstance(page_size, int) and page_size > 0, (
@@ -65,6 +64,10 @@ class Server:
             if next_index in indexed_dataset:
                 data.append(indexed_dataset[next_index])
                 current_size += 1
+            next_index += 1
+
+        # Adjust next_index to handle deletions
+        while next_index < len(indexed_dataset) and next_index not in indexed_dataset:
             next_index += 1
 
         return {
