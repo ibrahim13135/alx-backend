@@ -38,7 +38,7 @@ class Server:
             }
         return self.__indexed_dataset
 
-    def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict[str, Any]:
+    def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict:
         """Get hypermedia pagination info with deletion resilience.
 
         Args:
@@ -48,7 +48,9 @@ class Server:
         Returns:
             Dict[str, Any]: A dictionary containing pagination information.
         """
-        assert index is not None and isinstance(index, int) and 0 <= index < len(self.indexed_dataset()), (
+
+        assert (index is not None and isinstance(index, int)
+                and 0 <= index < len(self.indexed_dataset())), (
             "index must be a valid integer within the dataset range"
         )
         assert isinstance(page_size, int) and page_size > 0, (
@@ -67,7 +69,8 @@ class Server:
             next_index += 1
 
         # Adjust next_index to handle deletions
-        while next_index < len(indexed_dataset) and next_index not in indexed_dataset:
+        while next_index < len(indexed_dataset) and \
+                next_index not in indexed_dataset:
             next_index += 1
 
         return {
