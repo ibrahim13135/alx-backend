@@ -1,63 +1,35 @@
-
 #!/usr/bin/env python3
+"""Task 2: LIFO Caching.
 """
-This module contains the LIFOCache class that implements a caching system using
-the Last In, First Out (LIFO) algorithm.
-"""
+from collections import OrderedDict
 
 from base_caching import BaseCaching
-from collections import OrderedDict
 
 
 class LIFOCache(BaseCaching):
+    """Represents an object that allows storing and
+    retrieving items from a dictionary with a LIFO
+    removal mechanism when the limit is reached.
     """
-    LIFOCache class implements a caching system with LIFO eviction policy.
-
-    Args:
-        BaseCaching (class): Base class with cache system interface.
-    """
-
     def __init__(self):
-        """
-        Initialize the cache.
-
-        Attributes:
-            cache_data (OrderedDict): Dictionary to store the cache items while
-            maintaining their insertion order.
+        """Initializes the cache.
         """
         super().__init__()
         self.cache_data = OrderedDict()
 
     def put(self, key, item):
-        """
-        Add an item to the cache. If the cache exceeds its maximum size,
-        remove the last added item.
-
-        Args:
-            key (str): The key under which the item should be stored.
-            item (any): The item to be stored in the cache.
-
-        Returns:
-            None
+        """Adds an item in the cache.
         """
         if key is None or item is None:
             return
-        if len(self.cache_data) >= BaseCaching.MAX_ITEMS:
-            discard = self.cache_data.popitem()
-            print(f"DISCARD: {discard[0]}")
+        if key not in self.cache_data:
+            if len(self.cache_data) + 1 > BaseCaching.MAX_ITEMS:
+                last_key, _ = self.cache_data.popitem(True)
+                print("DISCARD:", last_key)
         self.cache_data[key] = item
+        self.cache_data.move_to_end(key, last=True)
 
     def get(self, key):
+        """Retrieves an item by key.
         """
-        Retrieve an item from the cache by key.
-
-        Args:
-            key (str): The key of the item to be retrieved.
-
-        Returns:
-            any: The value associated with the key, or None if the key is not
-            found.
-        """
-        if key is None:
-            return None
-        return self.cache_data.get(key)
+        return self.cache_data.get(key, None)
