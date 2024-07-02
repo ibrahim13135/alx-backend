@@ -13,7 +13,7 @@ Cache replacement policies, also known as cache algorithms, are strategies used 
 - **E:** Secondary effects, such as queuing in multiprocessor systems
 
 ### Types of Cache Replacement Policies
-
+`
 1. **Optimal Replacement (Bélády's Algorithm):**
    - Discards the data that will not be needed for the longest time.
    - Example: Predicting that data item '5' won't be needed soon, so it gets replaced first.
