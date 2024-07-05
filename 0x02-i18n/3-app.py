@@ -1,50 +1,69 @@
 #!/usr/bin/env python3
-'''Task 2: Get locale from request
-'''
+"""
+This module starts a Flask web application and renders a template on the root
+route.
 
-from flask import Flask, render_template, request
-from flask_babel import Babel
+The application runs on host '0.0.0.0' and port 5000 with debug mode enabled.
+"""
 
-
-class Config:
-    '''Config class'''
-
-    DEBUG = True
-    LANGUAGES = ["en", "fr"]
-    BABEL_DEFAULT_LOCALE = "en"
-    BABEL_DEFAULT_TIMEZONE = "UTC"
+from flask import Flask, render_template
+from flask_babel import Babel, request
 
 
 app = Flask(__name__)
+
+
+class Config:
+    """
+    Configuration class for setting application parameters.
+
+    Attributes:
+        LANGUAGES (list): Supported languages.
+        BABEL_DEFAULT_LOCALE (str): Default locale for the application.
+        BABEL_DEFAULT_TIMEZONE (str): Default timezone for the application.
+    """
+    LANGUAGES = ["en", "fr"]
+    BABEL_DEFAULT_LOCALE = LANGUAGES[0]
+    BABEL_DEFAULT_TIMEZONE = "UTC"
+
+
 app.config.from_object(Config)
-app.url_map.strict_slashes = False
 babel = Babel(app)
 
 
 @babel.localeselector
-def get_locale() -> str:
-    """Retrieves the locale for a web page.
+def get_locale():
+    """
+    Selects the best match for the client's preferred language.
+
+    This function is used by Flask-Babel to determine which language to use
+    for translations. It checks the languages preferred by the client (as
+    indicated by the 'Accept-Language' header in the request) and matches
+    them against the supported languages configured in the application.
 
     Returns:
-        str: best match
+        str: The best matching language code from the supported languages,
+        or the default language if no match is found.
     """
     return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 
 @app.route('/')
-def index() -> str:
-    '''default route
+def hello_world() -> str:
+    """
+    Renders the '3-index.html' template on the root route.
 
     Returns:
-        html: homepage
-    '''
-    return render_template("3-index.html")
-
-# uncomment this line and comment the @babel.localeselector
-# you get this error:
-# AttributeError: 'Babel' object has no attribute 'localeselector'
-# babel.init_app(app, locale_selector=get_locale)
+        str: The rendered HTML content of the '1-index.html' template.
+    """
+    return render_template('3-index.html')
 
 
 if __name__ == "__main__":
-    app.run()
+    """
+    Starts the Flask web application.
+
+    The application will run in debug mode, listening on all available
+    IP addresses on port 5000.
+    """
+    app.run(debug=True, host='0.0.0.0', port=5000)
