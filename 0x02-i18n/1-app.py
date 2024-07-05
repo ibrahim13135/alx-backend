@@ -1,25 +1,33 @@
-from flask import Flask, render_template
+#!/usr/bin/env python3
+'''Task 0: Basic Flask app
+'''
 
+from flask import Flask, render_template
 from flask_babel import Babel
 
 
 class Config:
+    '''Config class'''
+
     LANGUAGES = ["en", "fr"]
-    #set Babel’s default locale ("en") and timezone ("UTC"
+    # set Babel’s default locale ("en") and timezone ("UTC"
     BABEL_DEFAULT_LOCALE = "en"
     BABEL_DEFAULT_TIMEZONE = "UTC"
 
-app: Flask = Flask(__name__)
 
-#configure Flask-Babel in your Flask application
+app = Flask(__name__)
+# configure Flask-Babel in our Flask application
 app.config.from_object(Config)
-bable = Babel(app)
+app.url_map.strict_slashes = False
+
+babel = Babel(app)
 
 
 @app.route('/')
-def index() -> str:
-    return render_template('0-index.html')
+def index():
+    '''default route'''
+    return render_template("1-index.html",)
 
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port='5000')
+if __name__ == "__main__":
+    app.run(debug=True)
