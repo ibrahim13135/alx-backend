@@ -28,6 +28,12 @@ def get_locale() -> str:
     Returns:
         str: best match
     """
+
+# In your get_locale function, detect if the incoming request contains locale
+#  argument and ifs value is a supported locale,
+# return it. If not or if the parameter is not present, resort to the
+# previous default behavior.
+
     locale = request.args.get('locale')
     if locale in app.config['LANGUAGES']:
         return locale
