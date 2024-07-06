@@ -6,9 +6,8 @@ route.
 The application runs on host '0.0.0.0' and port 5000 with debug mode enabled.
 """
 
-from flask import Flask, render_template
+from flask import Flask, render_template, g
 from flask_babel import Babel, request
-
 
 app = Flask(__name__)
 
@@ -30,6 +29,35 @@ class Config:
 app.config.from_object(Config)
 babel = Babel(app)
 
+users = {
+    1: {"name": "Balou", "locale": "fr", "timezone": "Europe/Paris"},
+    2: {"name": "Beyonce", "locale": "en", "timezone": "US/Central"},
+    3: {"name": "Spock", "locale": "kg", "timezone": "Vulcan"},
+    4: {"name": "Teletubby", "locale": None, "timezone": "Europe/London"},
+}
+
+
+def get_user():
+    """
+    Retrieves a user dictionary based on the login_as parameter.
+
+    Returns:
+        dict or None: The user dictionary if found, otherwise None.
+    """
+    try:
+        user_id = int(request.args.get('login_as'))
+        return users.get(user_id)
+    except (TypeError, ValueError):
+        return None
+
+
+@app.before_request
+def before_request():
+    """
+    Executed before each request to set the user on flask.g if logged in.
+    """
+    g.user = get_user()
+
 
 @babel.localeselector
 def get_locale():
@@ -45,21 +73,23 @@ def get_locale():
         str: The best matching language code from the supported languages,
         or the default language if no match is found.
     """
-    local = request.args.get('locale')
-    if local and local in app.config['LANGUAGES']:
-        return local
+    locale = request.args.get('locale')
+    if locale and locale in app.config['LANGUAGES']:
+        return locale
+    if g.user and g.user['locale'] in app.config['LANGUAGES']:
+        return g.user['locale']
     return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 
 @app.route('/')
 def hello_world() -> str:
     """
-    Renders the '3-index.html' template on the root route.
+    Renders the '5-index.html' template on the root route.
 
     Returns:
-        str: The rendered HTML content of the '1-index.html' template.
+        str: The rendered HTML content of the '5-index.html' template.
     """
-    return render_template('3-index.html')
+    return render_template('5-index.html', locale=get_locale())
 
 
 if __name__ == "__main__":
